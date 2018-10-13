@@ -73,15 +73,26 @@ var hook = hook || {
 
 Interpolator.prototype.process = function(data) {
 
+    /*
+    Let newIds = [];
+    
+    foreach key i in data.things
+        foreach key j in data.things[i]
+            if  data.things[i][j][0] === "thingId"
+            &&  not data.things[i][j][1]
+            
+            append data.things[i][j][1] to newIds
+    */
+    
     var newIds = [];
-    for(let i in data.things) {
-        for(let j in data.things[i]) {
-            if(data.things[i][j][0] === "thingId" &&
-                !this.things[data.things[i][j][1]]) {
+    for(let i in data.things)
+    for(let j in data.things[i])
+        if(data.things[i][j][0] === "thingId" &&
+            !this.things[data.things[i][j][1]]) {
                 newIds.push(data.things[i][j][1]);
-            }
+                
         }
-    }
+    console.log(data)
 
     var ret = hook.process.call(this, data);
 
