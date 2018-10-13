@@ -73,27 +73,43 @@ var hook = hook || {
 
 Interpolator.prototype.process = function(data) {
     
-    const flatten = (arr) => arr.reduce((l,r) => l.concat(r), []);
+    //
+    const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
+    const is_id = (entry) => entry[0] === "thingId";
     const is_new = (id) => !this.things[id];
     
-    const flat_data = data.things ? flatten(data.things) : [];
-    const all_ids = flat_data.filter(p => p[0] === "thingId").map(p => p[1]);
-    var newIds = all_ids.filter(is_new);
+    var newIds =
+        flatten(data.things)
+        .filter(is_id)
+        .map(p => p[1])
+        .filter(is_new);
+    //
     
+    // 2
     var ret = hook.process.call(this, data);
-
-    for(let i in sim.things) {
-        let thing = sim.things[i];
-        if(thing.unit && thing.name !== thing.spec.name) {
-            // Set unit's name so we don't have to access it through spec
-            thing.name = thing.spec.name;
-        }
-    }
+    // 2
     
-    const new_things = newIds.map(id => sim.things[id]);
-    new_things.forEach(t => {if (t) r26Ai.addAiToUnit(t)});
+    //
+    const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
+    const is_unit = (t) => t.unit ? t.unit : false;
+    const different_names = (unit) => unit.name !== unit.spec.name;
     
+    object_to_array(sim.things)
+        .filter(is_unit)
+        .filter(different_names)
+        .forEach(u => { u.name = u.spec.name });
+    //
+    
+    //
+    newIds
+        .map(id => sim.things[id])
+        .forEach(t => {if (t) r26Ai.addAiToUnit(t)});
+    //
+    
+    // 5
+    // 2 must be computed beforehand.
     return ret;
+    // 5
 }
 
 /*
