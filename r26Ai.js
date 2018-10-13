@@ -74,9 +74,10 @@ var hook = hook || {
 Interpolator.prototype.process = function(data) {
     
     const flatten = (arr) => arr.reduce((l,r) => l.concat(r), []);
+    const is_new = (id) => !this.things[id];
+    
     const flat_data = data.things ? flatten(data.things) : [];
     const all_ids = flat_data.filter(p => p[0] === "thingId").map(p => p[1]);
-    const is_new = (id) => !this.things[id];
     var newIds = all_ids.filter(is_new);
     
     var ret = hook.process.call(this, data);
