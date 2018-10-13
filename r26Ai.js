@@ -88,17 +88,22 @@ Interpolator.prototype.process = function(data) {
     
     console.log(data)
     
+    let data_ids = data.things.map(i => i.filter(j => j[0] === "thingId"));
+    let new_ids = data_ids.filter(t => this.things[t[1]]);
+    
     var newIds = [];
-    for(let i in data.things)
-    {
-        console.log(i)
-    for(let j in data.things[i])
-        if(data.things[i][j][0] === "thingId" &&
-            !this.things[data.things[i][j][1]]) {
-                newIds.push(data.things[i][j][1]);
+    
+    
+    //for(let i in data.things)
+    //{
+    //    console.log(i)
+    //for(let j in data.things[i])
+    //    if(data.things[i][j][0] === "thingId" &&
+    //        !this.things[data.things[i][j][1]]) {
+    //            newIds.push(data.things[i][j][1]);
                 
-        }
-    }
+    //    }
+    //}
     
     console.log("end")
     
