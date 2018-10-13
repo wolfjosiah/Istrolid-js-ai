@@ -72,46 +72,11 @@ var hook = hook || {
 };
 
 Interpolator.prototype.process = function(data) {
-
-    /*
-    Let newIds = [];
     
-    foreach key i in data.things
-        foreach key j in data.things[i]
-            if  data.things[i][j][0] === "thingId"
-            &&  not data.things[i][j][1]
-            
-            append data.things[i][j][1] to newIds
-    */
-    
-    console.log("start");
-    
-    console.log(data)
-    
-    // let data_ids = data.things.map(i => i.filter(j => j[0] === "thingId"));
-    //let data_ids = data.things.map(i => console.log(i));
-    //let new_ids = data_ids.filter(t => this.things[t[1]]);
-    //console.log(data_ids);
-    //console.log(new_ids);
-    
-    
-    var newIds = [];
-    //data.things.forEach(i => i.forEach(j => {j[1] == }))
-    // newIds = new_ids;
-    
-    
-    for(let i in data.things)
-    {
-        console.log(i)
-    for(let j in data.things[i])
-        if(data.things[i][j][0] === "thingId" &&
-            !this.things[data.things[i][j][1]]) {
-                newIds.push(data.things[i][j][1]);
-                
-        }
-    }
-    
-    console.log("end")
+    let flatten = (arr) => arr.reduce((l,r) => l.concat(r), []);
+    let thing_ids = [];
+    if (data.things) thing_ids = flatten(data.things).filter(t => t[0] === "thingId");
+    var newIds = thing_ids.filter(t => !this.things[t[1]], this);
     
     var ret = hook.process.call(this, data);
 
