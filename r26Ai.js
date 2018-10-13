@@ -89,13 +89,18 @@ Interpolator.prototype.process = function(data) {
             thing.name = thing.spec.name;
         }
     }
-
+    
+    const new_things = newIds.map(id => sim.things[id]);
+    new_things.forEach(t => {if (t) r26Ai.addAiToUnit(t)});
+    
+    /*
     for(let i in newIds) {
         let t = sim.things[newIds[i]];
         if(t) {
             r26Ai.addAiToUnit(t);
         }
     }
+    */
 
     return ret;
 }
