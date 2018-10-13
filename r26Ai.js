@@ -72,17 +72,14 @@ var hook = hook || {
 };
 
 Interpolator.prototype.process = function(data) {
-
-    var newIds = [];
-    for(let i in data.things) {
-        for(let j in data.things[i]) {
-            if(data.things[i][j][0] === "thingId" &&
-                !this.things[data.things[i][j][1]]) {
-                newIds.push(data.things[i][j][1]);
-            }
-        }
-    }
-
+    
+    const flatten = (arr) => arr.reduce((l,r) => l.concat(r), []);
+    const is_new = (id) => !this.things[id];
+    
+    const flat_data = data.things ? flatten(data.things) : [];
+    const all_ids = flat_data.filter(p => p[0] === "thingId").map(p => p[1]);
+    var newIds = all_ids.filter(is_new);
+    
     var ret = hook.process.call(this, data);
 
     for(let i in sim.things) {
