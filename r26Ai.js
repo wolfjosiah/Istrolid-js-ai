@@ -312,22 +312,33 @@ var build = {
      * @param {number} number - how many to field
      * @param {number} [priority=0] - build priority, lower number has higher priority
      */
-    keepUnits: function(number, priority = 0) {
-        var buildNumber = number;
-
-        buildNumber -= order.findThings(unit => condition.isMyUnit(unit) && build.filter(unit)).length;
-        build.buildPriority.forEach(p => {
-            if(p.index === build.index && p.priority <= priority) {
-                buildNumber -= p.number;
-            }
-        });
-
-        if(buildNumber > 0) {
-            build.buildPriority.push({
-                index: build.index,
-                number: buildNumber,
-                priority: priority,
-            });
+    keepUnits: function(quantity_desired, priority = 0) {
+        const relevant_unit =
+            (unit) =>
+                condition.isMyUnit(unit)
+            &&  build.filter(unit);
+        const quantity_in_play =
+            order.findThings(relevant_unit).length;
+        
+        const relevant_build =
+            (w) =>
+                w.index === build.index
+            &&  w.priority <= priority;
+        const quantity_being_built =
+            build.buildPriority
+            .filter(relevant_build)
+            .map(w => w.number)
+            .reduce((l,r) => l + r, 0);
+        
+        const quantity_needed = quantity_desired - quantity_in_play - quantity_being_built;
+        
+        if(quantity_needed > 0) {
+            const work_order =
+                {   index: build.index
+                ,   number: quantity_needed
+                ,   priority: priority
+                };
+            build.buildPriority.push(work_order);
         }
     },
 
