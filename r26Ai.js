@@ -324,14 +324,7 @@ var build = {
         
         const quantity_needed = quantity_desired - quantity_in_play - quantity_being_built;
         
-        if(quantity_needed > 0) {
-            const work_order =
-                {   index: build.index
-                ,   number: quantity_needed
-                ,   priority: priority
-                };
-            build.buildPriority.push(work_order);
-        }
+        build.buildUnits(quantity_needed, priority);
     },
 
     /**
