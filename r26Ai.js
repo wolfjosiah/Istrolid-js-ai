@@ -84,6 +84,8 @@ Interpolator.prototype.process = function(data) {
             append data.things[i][j][1] to newIds
     */
     
+    console.log("start");
+    
     console.log(data)
     
     var newIds = [];
@@ -98,7 +100,8 @@ Interpolator.prototype.process = function(data) {
         }
     }
     
-
+    console.log("end")
+    
     var ret = hook.process.call(this, data);
 
     for(let i in sim.things) {
