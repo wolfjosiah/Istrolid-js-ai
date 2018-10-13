@@ -72,44 +72,30 @@ var hook = hook || {
 };
 
 Interpolator.prototype.process = function(data) {
-    
-    //
     const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
     const is_id = (entry) => entry[0] === "thingId";
     const is_new = (id) => !this.things[id];
-    
     var newIds =
         flatten(data.things)
         .filter(is_id)
         .map(p => p[1])
         .filter(is_new);
-    //
     
-    // 2
     var ret = hook.process.call(this, data);
-    // 2
     
-    //
     const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
     const is_unit = (t) => t.unit ? t.unit : false;
     const different_names = (unit) => unit.name !== unit.spec.name;
-    
     object_to_array(sim.things)
         .filter(is_unit)
         .filter(different_names)
         .forEach(u => { u.name = u.spec.name });
-    //
     
-    //
     newIds
         .map(id => sim.things[id])
         .forEach(t => {if (t) r26Ai.addAiToUnit(t)});
-    //
     
-    // 5
-    // 2 must be computed beforehand.
     return ret;
-    // 5
 }
 
 /*
