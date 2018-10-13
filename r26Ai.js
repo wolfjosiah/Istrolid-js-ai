@@ -11,6 +11,8 @@
  * class `ai` is instantized (new'd) and add to every units that matches
  * the filter.
  *
+ * `tick` runs every tick
+ *
  * The `ai` object should have a run method. It is called every 30 ticks.
  * In `run`, you can call `order.findThings()` to get your targets
  * and maybe use functions in `movement.*` to get where you want to go, or just
@@ -26,6 +28,7 @@
  *      filter: function(unit) {
  *          return unit.name === "BANANA";
  *      },
+ *      tick: function(unit) {},
  *      ai: function(unit) {
  *          this.run = function() {
  *              order.move([0, 0]);
@@ -108,11 +111,9 @@ BattleMode.prototype.tick = function() {
 */
 
 BattleMode.prototype.genOrderId = function() {
+    let o = this.orderId;
     if(order.ordering)
-        var o = this.orderId + 1;
-    else
-        var o = this.orderId;
-
+        o += 1;
     this.orderId += 2;
     return o;
 }
@@ -185,31 +186,33 @@ var r26Ai = {
             }
             order.stopOrdering();
 
-            if(r26Ai.step % 48 === 0) {
-                let built = false;
-                for(let i in r26Ai.rules) {
-                    let rule = r26Ai.rules[i];
-                    for(let j = 0; j < commander.buildBar.length; j++) {
-                        let unit = buildBar.specToUnit(commander.buildBar[j]);
-                        try {
-                            if(unit && rule &&
-                                typeof rule.build === "function" &&
-                                typeof rule.filter === "function" &&
-                                rule.filter(unit)) {
+            let built = false;
+            for(let i in r26Ai.rules) {
+                let rule = r26Ai.rules[i];
+                for(let j = 0; j < commander.buildBar.length; j++) {
+                    let unit = buildBar.specToUnit(commander.buildBar[j]);
+                    try {
+                        if(unit && rule &&
+                            typeof rule.filter === "function" && rule.filter(unit)) {
+                            if(typeof rule.build === "function") {
+                                if(r26Ai.step % 48 === 0) {
+                                    build.startBuilding(j, rule.filter);
+                                    rule.build(unit);
 
-                                build.startBuilding(j, rule.filter);
-                                rule.build(unit);
-
-                                built = true;
+                                    built = true;
+                                }
                             }
-                        } catch(e) {
-                            console.error(e.stack);
+                            if(typeof rule.tick === "function") {
+                                rule.tick(unit);
+                            }
                         }
+                    } catch(e) {
+                        console.error(e.stack);
                     }
                 }
-                if(built)
-                    build.updateBuildQ();
             }
+            if(built)
+                build.updateBuildQ();
 
             r26Ai.step++;
         } else {
