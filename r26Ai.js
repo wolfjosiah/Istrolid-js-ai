@@ -90,6 +90,9 @@ Interpolator.prototype.process = function(data) {
     
     let data_ids = data.things.map(i => i.filter(j => j[0] === "thingId"));
     let new_ids = data_ids.filter(t => this.things[t[1]]);
+    console.log(data_ids);
+    console.log(new_ids);
+    
     
     var newIds = [];
     newIds = new_ids;
