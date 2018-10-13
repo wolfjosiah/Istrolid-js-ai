@@ -313,22 +313,14 @@ var build = {
      * @param {number} [priority=0] - build priority, lower number has higher priority
      */
     keepUnits: function(quantity_desired, priority = 0) {
-        const relevant_unit =
-            (unit) =>
-                condition.isMyUnit(unit)
-            &&  build.filter(unit);
         const quantity_in_play =
-            order.findThings(relevant_unit).length;
+            order.findThings((unit) => condition.isMyUnit(unit) && build.filter(unit)).length;
         
-        const relevant_build =
-            (w) =>
-                w.index === build.index
-            &&  w.priority <= priority;
         const quantity_being_built =
             build.buildPriority
-            .filter(relevant_build)
-            .map(w => w.number)
-            .reduce((l,r) => l + r, 0);
+                .filter((w) => w.index === build.index && w.priority <= priority)
+                .map(w => w.number)
+                .reduce((l,r) => l + r, 0);
         
         const quantity_needed = quantity_desired - quantity_in_play - quantity_being_built;
         
