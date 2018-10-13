@@ -92,6 +92,7 @@ Interpolator.prototype.process = function(data) {
     let new_ids = data_ids.filter(t => this.things[t[1]]);
     
     var newIds = [];
+    newIds = new_ids;
     
     
     //for(let i in data.things)
