@@ -141,21 +141,19 @@ var r26Ai = {
     step: 0,
 
     addAiToUnit: function(unit) {
-
-        if(!commander || unit.owner !== commander.number)
-            return;
-
-        for(let i in r26Ai.rules) {
-            let rule = r26Ai.rules[i];
+        
+        const is_function = (f) => typeof f === "function";
+        
+        if (commander && unit.owner === commander.number)
+        {
             try {
-                if(rule &&
-                    typeof rule.filter === "function" &&
-                    typeof rule.ai === "function" &&
-                    rule.filter(unit)) {
-
-                    unit.r26Ai = new rule.ai(unit);
-                }
-            } catch(e) {
+                r26Ai.rules
+                    .filter(r => !!r)
+                    .filter(r => is_function(r.filter))
+                    .filter(r => is_function(r.ai))
+                    .filter(r => r.filter(unit))
+                    .forEach(r => {unit.r26Ai = new r.ai(unit)});
+            } catch (e) {
                 console.error(e.stack);
             }
         }
