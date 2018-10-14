@@ -111,8 +111,8 @@ BattleMode.prototype.genOrderId = function() {
 }
 
 v2.distanceSqr = function(from, to) {
-    var x = to[0] - from[0];
-    var y = to[1] - from[1];
+    const x = to[0] - from[0];
+    const y = to[1] - from[1];
     return x * x + y * y;
 }
 
