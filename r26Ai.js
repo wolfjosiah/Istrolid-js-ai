@@ -75,13 +75,13 @@ Interpolator.prototype.process = function(data) {
     const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
     const is_id = (entry) => entry[0] === "thingId";
     const is_new = (id) => !this.things[id];
-    var newIds =
+    const newIds =
         flatten(data.things)
         .filter(is_id)
         .map(p => p[1])
         .filter(is_new);
     
-    var ret = hook.process.call(this, data);
+    const ret = hook.process.call(this, data);
     
     const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
     const is_unit = (t) => t.unit ? t.unit : false;
