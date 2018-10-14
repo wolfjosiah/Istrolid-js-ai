@@ -106,9 +106,7 @@ BattleMode.prototype.tick = function() {
 */
 
 BattleMode.prototype.genOrderId = function() {
-    let o = this.orderId;
-    if(order.ordering)
-        o += 1;
+    const o = this.orderId + !!order.ordering;
     this.orderId += 2;
     return o;
 }
