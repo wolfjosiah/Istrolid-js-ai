@@ -106,9 +106,8 @@ BattleMode.prototype.tick = function() {
 */
 
 BattleMode.prototype.genOrderId = function() {
-    const o = this.orderId + !!order.ordering;
     this.orderId += 2;
-    return o;
+    return (this.orderId + !!order.ordering - 2);
 }
 
 v2.distanceSqr = function(from, to) {
