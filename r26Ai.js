@@ -84,7 +84,7 @@ Interpolator.prototype.process = function(data) {
     const ret = hook.process.call(this, data);
     
     const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
-    const is_unit = (t) => t.unit ? t.unit : false;
+    const is_unit = (t) => !!t.unit;
     const different_names = (unit) => unit.name !== unit.spec.name;
     object_to_array(sim.things)
         .filter(is_unit)
