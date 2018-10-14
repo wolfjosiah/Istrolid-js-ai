@@ -358,16 +358,14 @@ var order = {
 
     // Used in r26Ai to start ordering an unit
     startOrdering: function(unit) {
-        if(!order.oriSel)
-            order.oriSel = commander.selection;
+        if (!order.oriSel) {order.oriSel = commander.selection;}
         order.unit = unit;
         battleMode.selectUnitsIds([unit.id]);
     },
 
     // Used in r26Ai to stop ordering and restore selections
     stopOrdering: function() {
-        if(order.oriSel)
-            battleMode.selectUnits(order.oriSel);
+        if (order.oriSel) {battleMode.selectUnits(order.oriSel);}
         order.oriSel = null;
         order.unit = null;
     },
@@ -378,11 +376,10 @@ var order = {
      * @param {v2} dest - destination to move to
      */
     move: function(des) {
-        if(!des) return;
+        if (!des) return;
         var unitOrder = order.getUnitOrders(order.unit)[0];
-        if(!unitOrder || !simpleEquals(unitOrder.dest, des) &&
-            v2.distance(order.unit.pos, des) > 50) {
-
+        if (!unitOrder || !simpleEquals(unitOrder.dest, des) && v2.distance(order.unit.pos, des) > 50)
+        {
             order.ordering = true;
             battleMode.moveOrder([des], false);
             order.ordering = false;
