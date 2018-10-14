@@ -179,16 +179,19 @@ var r26Ai = {
             }
             
             order.stopOrdering();
-
+            
+            const is_function = (f) => typeof f === "function";
+            const rules =
+                r26Ai.rules
+                .filter(r => !!r)
+                .filter(r => is_function(r.filter));
             let built = false;
-            for(let i in r26Ai.rules) {
-                let rule = r26Ai.rules[i];
+            for (let rule of rules) {
                 for(let j = 0; j < commander.buildBar.length; j++) {
                     let unit = buildBar.specToUnit(commander.buildBar[j]);
                     try {
-                        if(unit && rule &&
-                            typeof rule.filter === "function" && rule.filter(unit)) {
-                            if(typeof rule.build === "function") {
+                        if (unit && rule.filter(unit)) {
+                            if (is_function(rule.build)) {
                                 if(r26Ai.step % 48 === 0) {
                                     build.startBuilding(j, rule.filter);
                                     rule.build(unit);
@@ -196,9 +199,7 @@ var r26Ai = {
                                     built = true;
                                 }
                             }
-                            if(typeof rule.tick === "function") {
-                                rule.tick(unit);
-                            }
+                            if (is_function(rule.tick)) rule.tick(unit);
                         }
                     } catch(e) {
                         console.error(e.stack);
