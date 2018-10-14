@@ -161,19 +161,23 @@ var r26Ai = {
 
     tick: function() {
         if(r26Ai.enabled && commander && intp.state === "running" && commander.side !== "spectators") {
-            for(let i in sim.things) {
-                let thing = sim.things[i];
-                if(thing.r26Ai) {
-                    if((r26Ai.step + thing.id) % 8 === 0) {
-                        order.startOrdering(thing);
-                        try {
-                            thing.r26Ai.run();
-                        } catch(e) {
-                            console.error(e.stack);
-                        }
-                    }
+            
+            const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
+            const things =
+                object_to_array(sim.things)
+                .filter(t => t.r26Ai)
+                .filter(t => (r26Ai.step + t.id) % 8 === 0);
+            
+            for (let t of things)
+            {
+                order.startOrdering(t)
+                try {
+                    t.r26Ai.run();
+                } catch (e) {
+                    console.error(e.stack);
                 }
             }
+            
             order.stopOrdering();
 
             let built = false;
