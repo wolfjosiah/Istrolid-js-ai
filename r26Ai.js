@@ -72,6 +72,10 @@ var hook = hook || {
 };
 
 Interpolator.prototype.process = function(data) {
+
+    /*
+    Get all `newIds` from `data`
+    */
     const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
     const is_id = (entry) => entry[0] === "thingId";
     const is_new = (id) => !this.things[id];
@@ -81,8 +85,24 @@ Interpolator.prototype.process = function(data) {
         .map(p => p[1])
         .filter(is_new);
     
+    /*
+    hook.process is Istrolid's Interpolator.process function.
+    
+    While it was overridden, earlier in this
+    code, the effects it causes are still needed
+    to get the game to run.
+    
+    Presumeable, it causes effects used by
+    the variables following this line of
+    code, so it needs to stay on this line.
+    */
     const ret = hook.process.call(this, data);
     
+    /*
+    foreach unit:
+    whose `name` and `spec.name` don't match:
+    set it's `name` to be it's `spec.name`
+    */
     const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
     const is_unit = (t) => !!t.unit;
     const different_names = (unit) => unit.name !== unit.spec.name;
@@ -91,10 +111,30 @@ Interpolator.prototype.process = function(data) {
         .filter(different_names)
         .forEach(u => { u.name = u.spec.name });
     
+    /*
+    gives each new thing a r26Ai ai interface
+    */
     newIds
         .map(id => sim.things[id])
         .forEach(t => {if (t) r26Ai.addAiToUnit(t)});
     
+    /*
+    Possible returns:
+    - Interpolator
+    - onecup.refresh()
+    - (order.step + 16 * 5 < sim.step) // boolean
+    - undefined
+    -----------------
+      Interpolator is this one, not hook, because when it's called
+      we pass in this context, which has the Interpolator
+      from this context.
+    ------------------
+      Onecup.refresh returns:
+      - undefined
+      - onecup.track_error(redraw)
+      - requestAnimationFrame(tick, 0)
+    --------------------
+    */
     return ret;
 }
 
