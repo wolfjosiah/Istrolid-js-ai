@@ -187,11 +187,11 @@ var r26Ai = {
         
         if (commander && unit.owner === commander.number)
         {
+            const valid_rule =
+                (r) => !!r && is_function(r.filter) && is_function(r.ai);
             try {
                 r26Ai.rules
-                    .filter(r => !!r)
-                    .filter(r => is_function(r.filter))
-                    .filter(r => is_function(r.ai))
+                    .filter(valid_rule)
                     .filter(r => r.filter(unit))
                     .forEach(r => {unit.r26Ai = new r.ai(unit)});
             } catch (e) {
