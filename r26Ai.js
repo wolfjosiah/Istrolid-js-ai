@@ -78,11 +78,12 @@ Interpolator.prototype.process = function(data) {
     */
     const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
     const is_id = (entry) => entry[0] === "thingId";
+    const extract_id = (entry) => entry[1];
     const is_new = (id) => !this.things[id];
     const newIds =
         flatten(data.things)
         .filter(is_id)
-        .map(p => p[1])
+        .map(extract_id)
         .filter(is_new);
     
     /*
