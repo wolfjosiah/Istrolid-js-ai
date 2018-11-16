@@ -224,32 +224,33 @@ var r26Ai = {
             const is_function = (f) => typeof f === "function";
             const rules =
                 r26Ai.rules
-                .filter(r => !!r)
-                .filter(r => is_function(r.filter));
+                .filter(r => !!r && is_function(r.filter));
             let built = false;
-            for (let rule of rules) {
-                for(let j = 0; j < commander.buildBar.length; j++) {
-                    let unit = buildBar.specToUnit(commander.buildBar[j]);
-                    try {
-                        if (unit && rule.filter(unit)) {
-                            if (is_function(rule.build)) {
-                                if(r26Ai.step % 48 === 0) {
-                                    build.startBuilding(j, rule.filter);
-                                    rule.build(unit);
-
-                                    built = true;
-                                }
-                            }
-                            if (is_function(rule.tick)) rule.tick(unit);
+            for (let rule of rules)
+              for (let [j, spec] of commander.buildBar.entries())
+            {
+                let unit = buildBar.specToUnit(spec);
+                try
+                {
+                    if (unit && rule.filter(unit))
+                    {
+                        if (is_function(rule.build) && (r26Ai.step % 48 === 0))
+                        {
+                            build.startBuilding(j, rule.filter);
+                            rule.build(unit);
+                            built = true;
                         }
-                    } catch(e) {
-                        console.error(e.stack);
+                        is_function(rule.tick) && rule.tick(unit);
                     }
                 }
+                catch(e)
+                {
+                    console.error(e.stack);
+                }
             }
-            if(built)
-                build.updateBuildQ();
-
+            
+            built && build.updateBuildQ();
+            
             r26Ai.step++;
         } else {
             build.resetBuildQueue();
