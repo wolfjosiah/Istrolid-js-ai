@@ -888,7 +888,8 @@ var movement = {
             var b = 2 * (v.x * (s.x - u.x) + v.y * (s.y - u.y));
             var c = sqr(s.x) - 2 * s.x * u.x + sqr(u.x) + sqr(s.y) - 2 * s.y * u.y + sqr(u.y) - sqr(d);
 
-            return (-b - Math.sqrt(sqr(b) - 4 * a * c)) / (2 * a);
+            let negative_root = (-b - Math.sqrt(sqr(b) - 4 * a * c)) / (2 * a);
+            return negative_root;
         };
 
         sim.spacesRebuild();
