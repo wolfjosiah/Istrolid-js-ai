@@ -71,53 +71,31 @@ var hook = hook || {
 //    tick: BattleMode.prototype.tick
 };
 
-Interpolator.prototype.process = function(data) {
-
-    /*
-    Get all `newIds` from `data`
-    */
-    const flatten = (arr = []) => arr.reduce((l,r) => l.concat(r), []);
-    const is_id = (entry) => entry[0] === "thingId";
-    const extract_id = (entry) => entry[1];
-    const is_new = (id) => !this.things[id];
-    const newIds =
-        flatten(data.things)
-        .filter(is_id)
-        .map(extract_id)
-        .filter(is_new);
+Interpolator.prototype.process = function(data)
+{
+    for ( var i = (data.things || []).length; i-- > 0; )
+    {
+        for ( var j = data.things[i].length; j-- > 0; )
+        {
+            var e = data.things[i][j];
+            if ( e[0] === "thingId" &&
+                 !this.things[e[1]] &&
+                 sim.things[e[1]] )
+            {
+                var u = sim.things[e[1]];
+                r26Ai.addAiToUnit(u);
+            }
+        }
+    }
     
-    /*
-    hook.process is Istrolid's Interpolator.process function.
-    
-    While it was overridden, earlier in this
-    code, the effects it causes are still needed
-    to get the game to run.
-    
-    Presumeable, it causes effects used by
-    the variables following this line of
-    code, so it needs to stay on this line.
-    */
-    const ret = hook.process.call(this, data);
-    
-    /*
-    foreach unit:
-    whose `name` and `spec.name` don't match:
-    set it's `name` to be it's `spec.name`
-    */
-    const object_to_array = (o = {}) => Object.getOwnPropertyNames(o).map(k => o[k]);
-    const is_unit = (t) => !!t.unit;
-    const different_names = (unit) => unit.name !== unit.spec.name;
-    object_to_array(sim.things)
-        .filter(is_unit)
-        .filter(different_names)
-        .forEach(u => { u.name = u.spec.name });
-    
-    /*
-    gives each new thing a r26Ai ai interface
-    */
-    newIds
-        .map(id => sim.things[id])
-        .forEach(t => {if (t) r26Ai.addAiToUnit(t)});
+    for ( var k in sim.things )
+    {
+        var thing = sim.things[k];
+        if ( thing.unit && thing.name !== thing.spec.name )
+        {
+            thing.name = thing.spec.name;
+        }
+    }
     
     /*
     Possible returns:
@@ -125,10 +103,6 @@ Interpolator.prototype.process = function(data) {
     - onecup.refresh()
     - (order.step + 16 * 5 < sim.step) // boolean
     - undefined
-    -----------------
-      Interpolator is this one, not hook, because when it's called
-      we pass in this context, which has the Interpolator
-      from this context.
     ------------------
       Onecup.refresh returns:
       - undefined
@@ -136,7 +110,7 @@ Interpolator.prototype.process = function(data) {
       - requestAnimationFrame(tick, 0)
     --------------------
     */
-    return ret;
+    return hook.process.call(this, data);
 }
 
 /*
