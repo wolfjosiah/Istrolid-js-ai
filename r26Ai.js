@@ -155,21 +155,25 @@ var r26Ai = {
     enabled: false,
     step: 0,
 
-    addAiToUnit: function(unit) {
+    addAiToUnit: function(unit)
+    {
+        if ( !commander || unit.owner !== commander.number )
+            return;
         
-        const is_function = (f) => typeof f === "function";
-        
-        if (commander && unit.owner === commander.number)
+        for ( var i = r26Ai.rules.length; i-- > 0; )
         {
-            const valid_rule =
-                (r) => !!r && is_function(r.filter) && is_function(r.ai);
-            try {
-                r26Ai.rules
-                    .filter(valid_rule)
-                    .filter(r => r.filter(unit))
-                    .forEach(r => {unit.r26Ai = new r.ai(unit)});
-            } catch (e) {
-                console.error(e.stack);
+            var r = r26Ai.rules[i];
+            if ( r && typeof r.filter === "function" &&
+                 typeof r.ai === "function" )
+            {
+                try {
+                    if ( r.filter(unit) )
+                    {
+                        unit.r26Ai = new r.ai(unit);
+                    }
+                } catch (e) {
+                    console.error(e.stack);
+                }
             }
         }
     },
